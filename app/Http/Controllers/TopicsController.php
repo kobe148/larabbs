@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Topic;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TopicRequest;
@@ -22,9 +23,9 @@ class TopicsController extends Controller
 		return view('topics.index', compact('topics'));
 	}
 
-    public function show(Topic $topic)
+    public function show(Topic $topic, User $user)
     {
-        return view('topics.show', compact('topic'));
+        return view('topics.show', compact('topic', 'user'));
     }
 
 	public function create(Topic $topic)
