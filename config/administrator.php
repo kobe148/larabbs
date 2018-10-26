@@ -60,7 +60,7 @@ return array(
      */
     'menu' => [
         '用户与权限' => [
-            'user',
+            'users',
         ],
     ],
 
@@ -115,7 +115,7 @@ return array(
      *
      * @type string
      */
-    'logout_path' => 'login',
+//    'logout_path' => 'login',
 
     /*
      * This is the key of the return path that is sent with the redirection to your login_action. Session::get('redirect') will hold the return URL.
