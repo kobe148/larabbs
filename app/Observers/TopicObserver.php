@@ -7,6 +7,7 @@ use App\Jobs\TranslateSlug;
 use App\Models\Reply;
 use App\Models\Topic;
 use App\Notifications\TopicReplied;
+use Illuminate\Support\Facades\DB;
 
 // creating, created, updating, updated, saving,
 // saved,  deleting, deleted, restoring, restored
@@ -47,5 +48,10 @@ class TopicObserver
 
         // 通知作者话题被回复了
         $topic->user->notify(new TopicReplied($reply));
+    }
+
+    public function deleted(Topic $topic)
+    {
+        DB::table('replies')->where('topic_id', $topic->id)->delete();
     }
 }
