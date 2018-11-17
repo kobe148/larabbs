@@ -3,15 +3,19 @@
 namespace App\Models;
 
 use App\Models\Traits\ActiveUserHelper;
+use App\Models\Traits\LastActiviedAtHelper;
+use Carbon\Carbon;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redis;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     use HasRoles;
     use ActiveUserHelper;
+    use LastActiviedAtHelper;
 
     use Notifiable {
         notify as protected laravelNotify;
@@ -88,5 +92,25 @@ class User extends Authenticatable
         }
 
         $this->attributes['avatar'] = $path;
+    }
+
+    public function syncUserActivedAr()
+    {
+        $yesterday_date = Carbon::yesterday()->toDateTimeString();
+
+        $hash = $this->hash_prefix . $yesterday_date;
+
+        $dates = Redis::hGetAll($hash);
+
+        foreach ($dates as $user_id => $actived_at) {
+            $user_id = str_replace($this->field_prefix, '', $user_id);
+
+            if ($user = $this->find($user_id)) {
+                $user->last_actived_at = $actived_at;
+                $user->save();
+            }
+        }
+
+        Redis::del($hash);
     }
 }
